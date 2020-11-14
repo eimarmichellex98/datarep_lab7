@@ -1,5 +1,5 @@
 import React from 'react';
-
+import axios from 'axios';
 
 export class Create extends React.Component {
 
@@ -45,6 +45,19 @@ export class Create extends React.Component {
         e.preventDefault();
         alert("Movie: " + this.state.Title + "\nYear: "
             + this.state.Year + "\nPoster: " + this.state.Poster);
+        
+        const newMovie = {
+            title: this.state.Title,
+            year: this.state.Year,
+            poster: this.state.Poster
+        }
+        axios.post('http://localhost:4000/api/movies', newMovie)
+        .then((res) =>{
+            console.log(res);
+        })
+        .catch((err) =>{
+            console.log(err);
+        })
     }
 
     //form has a onSubmit button and once clicked it invokes a method
