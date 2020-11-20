@@ -3,6 +3,7 @@ const app = express()
 const port = 4000 //changed to 4000 as 3000 is hosting another server
 const cors = require('cors')
 const bodyParser = require("body-parser")
+const mongoose = require('mongoose') //used to connect us to mongoDB (database)
 
 //cors
 app.use(cors());
@@ -14,13 +15,27 @@ app.use(function(req, res, next) {
     next();
     });
 
-//bodyParser
+//bodyParser/ parse application
 app.use(bodyParser.urlencoded({extended: false}))
+//parse application/json
 app.use(bodyParser.json())
+// connecting with mongoDB
+const myConnectionString = 'mongodb+srv://admin:admin@cluster0.kwywb.mongodb.net/movies?retryWrites=true&w=majority';
+mongoose.connect(myConnectionString, {useNewUrlParser: true});
+//making a schema for database 
+const Schema = mongoose.Schema;
+//data we are going to store 
+var movieSchema = new Schema({
+    title: String,
+    year: String,
+    poster: String
+})
+//MovieModel is what we call now when we want to interact with the database
+var MovieModel = mongoose.model("movie", movieSchema);
 
 app.get('/api/movies', (req,res) =>{
-    
-    const myMovies = [
+    //array of movies
+   /* const myMovies = [
         {
             "Title":"Avengers: Infinity War",
             "Year":"2018",
@@ -48,8 +63,19 @@ app.get('/api/movies', (req,res) =>{
             "Type":"movie",
                 "Poster":"https://m.media-amazon.com/images/M/MV5BNDUyODAzNDI1Nl5BMl5BanBnXkFtZTcwMDA2NDAzMw@@._V1_SX300.jpg"
             }
-    ];
-    res.status(200).json({movies: myMovies});
+    ];*/
+    //find all documents in database
+    MovieModel.find((err, data)=>{
+        res.json(data)
+    })
+    //res.status(200).json({movies: myMovies});
+})
+//
+app.get('api/moive/:id', (req,res)=>{
+    console.log(req.params.id);
+    MovieModel.findById(req.params.id, (err, data)=>{
+        res.json(data);
+    })
 })
 
 app.post('/api/movies', (req, res) =>{
@@ -57,6 +83,14 @@ app.post('/api/movies', (req, res) =>{
     console.log(req.body.title);
     console.log(req.body.year);
     console.log(req.body.poster);
+
+    MovieModel.create({
+        title: req.body.title,
+        year:req.body.year,
+        poster:req.body.poster
+    })
+
+    res.send('Item added');
 })
 
 app.listen(port, () => {
