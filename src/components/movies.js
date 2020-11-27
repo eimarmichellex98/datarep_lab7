@@ -6,7 +6,7 @@ import {MovieItem} from './movieItem';
     render(){
         //passing to movieItem.js
         return this.props.movies.map( (movie)=>{
-            return <MovieItem movie={movie}></MovieItem>
+            return <MovieItem key={movie._id} movie={movie} ReloadData={this.props.ReloadData}></MovieItem>
         })
     }
 }

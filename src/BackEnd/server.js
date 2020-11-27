@@ -71,12 +71,21 @@ app.get('/api/movies', (req,res) =>{
     //res.status(200).json({movies: myMovies});
 })
 //
-app.get('api/moive/:id', (req,res)=>{
+app.get('api/movies/:id', (req,res)=>{
     console.log(req.params.id);
     MovieModel.findById(req.params.id, (err, data)=>{
         res.json(data);
     })
 })
+//delete movies
+app.delete('/api/movies/:id', (req,res)=>{
+    console.log("Delete Movie: "+req.params.id);
+
+    MovieModel.findByIdAndDelete(req.params.id, (err,data)=>{
+        res.send(data);
+    })
+})
+
 
 app.post('/api/movies', (req, res) =>{
     console.log("Movie Received");
